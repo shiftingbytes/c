@@ -6,6 +6,8 @@
 void inputOutput(void);
 int convertCharToHex(char *hexdecnum);
 void toUpperCase(char *hexdecnum);
+void clearStdin();
+void deleteLastChar(char *string);
 
 // Constants
 #define INVALID_INPUT -1
@@ -14,16 +16,11 @@ void toUpperCase(char *hexdecnum);
 
 int main()
 {
+    // Test cases
+    // FF B4 C5 D1 65 99 A2 FF
+    // FF B4 C6 D4 65 95 A9 FF
+    // ff b4 c6 d4 65 95 a9 FF
     inputOutput();
-    /* char str[] ="- This, a sample string.";
-    char * pch;
-    printf ("Splitting string \"%s\" into tokens:\n",str);
-    pch = strtok (str," ");
-    while (pch != NULL)
-    {
-        printf ("%s\n",pch);
-        pch = strtok (NULL, " ");
-    } */
     return 0;
 }
 
@@ -37,46 +34,45 @@ void inputOutput()
     char comma[] = ",";
     int result = 0;
     int len;
-    char continueOrBreak[1];
-    char *inputPtr = NULL;
+    char continueOrBreak[1] = "\0";
     char *token;
-    printf("\n Please enter hexadecimal values: ");
-    
-    while((inputPtr = fgets(hexdecnum, MAX_INPUT, stdin))!= NULL){
-            if(*inputPtr == '\n')
-                    break;
-            token = strtok(hexdecnum, delim);
-            while(token != NULL)
-            {
-                result = convertCharToHex(token);
-                if (result != INVALID_INPUT)
-                {
-                //it's only going to be 3 digits + \0
-                char decimalNumber[4]; 
-                sprintf(decimalNumber,"%ld", result);
-                len = MAX_OUTPUT - strlen(stringOfDecimals);
-                strncat(stringOfDecimals, decimalNumber, len);
-                strncat(stringOfDecimals, comma, 1); 
-                }
-                else
-                {
-                    printf("\n Invalid hexadecimal");
-                    stringOfDecimals[0] = '\0';
-                    break;
-                }
-                token = strtok(NULL, delim);
-            }
+
+    printf("\n Please enter hexadecimals (maximum 23 characters total, numbers separated by space): ");
+    fgets(hexdecnum, MAX_INPUT+1, stdin);
+    toUpperCase(hexdecnum);
+    token = strtok(hexdecnum, delim);
+    while(token != NULL)
+    {
+        result = convertCharToHex(token);
+        if (result != INVALID_INPUT)
+        {
+        //it's only going to be 3 digits + \0
+        char decimalNumber[4]; 
+        sprintf(decimalNumber,"%ld", result);
+        len = MAX_OUTPUT - strlen(stringOfDecimals);
+        strncat(stringOfDecimals, decimalNumber, len);
+        strncat(stringOfDecimals, comma, 1); 
+        }
+        else
+        {
+            printf("\n Invalid hexadecimal");
+            stringOfDecimals[0] = '\0';
+            break;
+        }
+        token = strtok(NULL, delim);
     }
-    
-    //toUpperCase(hexdecnum);         
+    //delete last comma
+    deleteLastChar(stringOfDecimals);        
     if(stringOfDecimals[0]!='\0')
     {
         printf("\n Decimal values of entered hexadecimal number = %s", stringOfDecimals);
-    }  
+    } 
+   
     printf("\n Press c to enter another value or any key to quit ");
-    fgets(continueOrBreak, 1, stdin);
+    scanf("%s", continueOrBreak);
     if(continueOrBreak[0] == 'c')
     {
+        clearStdin();
         inputOutput();
     }
     else
@@ -109,6 +105,18 @@ int convertCharToHex(char *hexdecnum)
         i++;
     }
     return decnum;
+}
+
+void clearStdin(){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) 
+    { }
+}
+
+void deleteLastChar(char * string){
+
+    string[strlen(string)-1]=0;
+
 }
 
 void toUpperCase(char * temp) {

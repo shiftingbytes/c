@@ -48,7 +48,7 @@ void inputOutput()
         {
         //it's only going to be 3 digits + \0
         char decimalNumber[4]; 
-        sprintf(decimalNumber,"%ld", result);
+        sprintf(decimalNumber,"%d", result);
         len = MAX_OUTPUT - strlen(stringOfDecimals);
         strncat(stringOfDecimals, decimalNumber, len);
         strncat(stringOfDecimals, comma, 1); 
